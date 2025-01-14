@@ -4,6 +4,10 @@ public class Player : MonoBehaviour
 {
     [Header("Movement Settings")]
     [SerializeField] private float moveDistance = 1f;     // 이동할 거리(한 칸)
+
+    private Vector2 mapMinBounds = new Vector2(-10f, -10f); // Define the minimum bounds of the map
+    private Vector2 mapMaxBounds = new Vector2(10f, 10f);   // Define the maximum bounds of the map
+    
     private bool isMoving = false;
 
     // q, a, o, l 각각 몇 번 눌렀는지 기록
