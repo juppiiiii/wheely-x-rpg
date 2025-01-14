@@ -66,6 +66,24 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (playerInstance != null && groundTransform != null)
+        {
+            // Get the ground's bounds
+            Renderer groundRenderer = groundTransform.GetComponent<Renderer>();
+            if (groundRenderer != null)
+            {
+                Bounds groundBounds = groundRenderer.bounds;
+
+                // Get the player's current position
+                Vector3 playerPosition = playerInstance.transform.position;
+
+                // Clamp the player's position within the ground's bounds
+                playerPosition.x = Mathf.Clamp(playerPosition.x, groundBounds.min.x, groundBounds.max.x);
+                playerPosition.z = Mathf.Clamp(playerPosition.z, groundBounds.min.z, groundBounds.max.z);
+
+                // Apply the clamped position back to the player
+                playerInstance.transform.position = playerPosition;
+            }
+        }
     }
 }
