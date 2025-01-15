@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
         }
 
         Bounds groundBounds = groundRenderer.bounds;
-        Vector3 spawnPosition = new Vector3(groundBounds.center.x, groundBounds.max.y + 0.5f, groundBounds.min.z);
+        Vector3 spawnPosition = new Vector3(groundBounds.center.x-1.5f, groundBounds.max.y + 0.5f, groundBounds.min.z+0.5f);
 
         // 플레이어의 회전을 설정하여 XZ 평면에 수직으로 서 있도록 함
         Quaternion playerRotation = Quaternion.Euler(90, 0, 0); // X축을 기준으로 회전 설정
