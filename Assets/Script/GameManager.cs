@@ -2,12 +2,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("플레이어 설정")]
-    [SerializeField] private string playerPrefabPath = "Prefabs/Player"; // Resources 폴더 내의 프리팹 경로
-    private Transform groundTransform; // Ground의 Transform에 대한 참조
-
-    private GameObject playerInstance;
     public static GameManager Instance { get; private set; }
+
+    private ObjectManager objectManager;
+    private Transform groundTransform;
 
     void Awake()
     {
@@ -15,6 +13,13 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // ObjectManager 찾기
+            objectManager = FindAnyObjectByType<ObjectManager>();
+            if (objectManager == null)
+            {
+                Debug.LogError("씬에서 ObjectManager를 찾을 수 없습니다!");
+            }
         }
         else
         {
@@ -25,56 +30,50 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         InitializeGroundTransform();
-        LoadAndSpawnPlayer();
+        SpawnPlayer();
     }
 
     private void InitializeGroundTransform()
     {
-        // "Ground" 태그를 가진 오브젝트의 Transform을 찾음
-        GameObject groundObject = GameObject.FindWithTag("Ground");
-        if (groundObject != null)
+        GameObject ground = GameObject.Find("Ground");
+        Debug.Log($"Ground 오브젝트 찾기 결과: {(ground != null ? "성공" : "실패")}");
+        
+        if (ground != null)
         {
-            groundTransform = groundObject.transform;
+            groundTransform = ground.transform;
+            Debug.Log("Ground Transform이 설정되었습니다.");
         }
         else
         {
-            Debug.LogError("Ground 오브젝트를 찾을 수 없습니다. 'Ground' 태그가 설정되어 있는지 확인하세요.");
+            Debug.LogError("Ground 오브젝트를 찾을 수 없습니다!");
         }
     }
 
-    private void LoadAndSpawnPlayer()
+    private void SpawnPlayer()
     {
-        // Resources 폴더에서 Player 프리팹 로드
-        GameObject playerPrefab = Resources.Load<GameObject>(playerPrefabPath);
-
-        if (playerPrefab == null)
+        Debug.Log($"SpawnPlayer 시작 - ObjectManager: {(objectManager != null ? "있음" : "없음")}, GroundTransform: {(groundTransform != null ? "있음" : "없음")}");
+        
+        if (objectManager == null)
         {
-            Debug.LogError("Player 프리팹을 로드할 수 없습니다. 'Assets/Resources/Prefabs/Player.prefab' 경로를 확인하세요.");
+            Debug.LogError("ObjectManager가 없어 플레이어를 스폰할 수 없습니다!");
             return;
         }
 
         if (groundTransform == null)
         {
-            Debug.LogError("Ground Transform이 할당되지 않았습니다. 'Ground' 태그가 설정되어 있는지 확인하세요.");
+            Debug.LogError("Ground가 없어 플레이어를 스폰할 수 없습니다!");
             return;
         }
 
-        // Ground의 경계를 계산하여 Z 축의 가장 하단 위치를 찾음
-        Renderer groundRenderer = groundTransform.GetComponent<Renderer>();
-        if (groundRenderer == null)
-        {
-            Debug.LogError("Ground 오브젝트에 Renderer가 없습니다. 경계를 계산할 수 없습니다.");
-            return;
-        }
+        // 스폰 위치 계산
+        Vector3 spawnPosition = groundTransform.position;
+        spawnPosition.y = 1f; // 플레이어의 높이 조정
+        Quaternion playerRotation = Quaternion.identity;
 
-        Bounds groundBounds = groundRenderer.bounds;
-        Vector3 spawnPosition = new Vector3(groundBounds.center.x-1.5f, groundBounds.max.y + 0.5f, groundBounds.min.z+0.5f);
-
-        // 플레이어의 회전을 설정하여 XZ 평면에 수직으로 서 있도록 함
-        Quaternion playerRotation = Quaternion.Euler(90, 0, 0); // X축을 기준으로 회전 설정
-
-        // 계산된 위치와 회전으로 Player 프리팹 인스턴스화
-        playerInstance = Instantiate(playerPrefab, spawnPosition, playerRotation);
+        Debug.Log($"플레이어 스폰 시도 - 위치: {spawnPosition}");
+        // ObjectManager를 통해 플레이어 생성
+        GameObject player = objectManager.CreatePlayer(spawnPosition, playerRotation);
+        Debug.Log($"플레이어 스폰 결과: {(player != null ? "성공" : "실패")}");
     }
 
     // 특정 위치로 이동이 가능한지 체크하는 메서드
@@ -94,9 +93,9 @@ public class GameManager : MonoBehaviour
                 position.z <= groundBounds.max.z;
     }
 
-    // Update is called once per frame
     void Update()
     {
+        GameObject playerInstance = objectManager.PlayerInstance;
         if (playerInstance != null && groundTransform != null)
         {
             // 바닥의 경계 가져오기
