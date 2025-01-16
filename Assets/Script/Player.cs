@@ -68,13 +68,20 @@ public class Player : MonoBehaviour
     // 실제 이동 처리(여기서는 누적된 입력이 조건을 만족하면 한 칸 즉시 이동)
     private void Move(Vector2 direction)
     {
-        isMoving = true;
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("GameManager.Instance가 없습니다!");
+            return;
+        }
 
-        // moveDistance만큼 즉시 이동
         Vector3 targetPosition = transform.position + (Vector3)direction * moveDistance;
-        transform.position = targetPosition;
-
-        // 다른 방식(부드러운 이동 등)을 원한다면 코루틴(Lerp), 트윈 등을 고려
-        isMoving = false;
+        
+        // 이동 가능한지 체크
+        if (GameManager.Instance.IsMovementPossible(targetPosition))
+        {
+            isMoving = true;
+            transform.position = targetPosition;
+            isMoving = false;
+        }
     }
 }

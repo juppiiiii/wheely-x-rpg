@@ -2,11 +2,25 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("Player Settings")]
+    [Header("플레이어 설정")]
     [SerializeField] private string playerPrefabPath = "Prefabs/Player"; // Resources 폴더 내의 프리팹 경로
     private Transform groundTransform; // Ground의 Transform에 대한 참조
 
     private GameObject playerInstance;
+    public static GameManager Instance { get; private set; }
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
@@ -63,25 +77,42 @@ public class GameManager : MonoBehaviour
         playerInstance = Instantiate(playerPrefab, spawnPosition, playerRotation);
     }
 
+    // 특정 위치로 이동이 가능한지 체크하는 메서드
+    public bool IsMovementPossible(Vector3 position)
+    {
+        if (groundTransform == null) return false;
+
+        Renderer groundRenderer = groundTransform.GetComponent<Renderer>();
+        if (groundRenderer == null) return false;
+
+        Bounds groundBounds = groundRenderer.bounds;
+        
+        // 이동하려는 위치가 경계 내에 있는지 확인
+        return position.x >= groundBounds.min.x && 
+                position.x <= groundBounds.max.x && 
+                position.z >= groundBounds.min.z && 
+                position.z <= groundBounds.max.z;
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (playerInstance != null && groundTransform != null)
         {
-            // Get the ground's bounds
+            // 바닥의 경계 가져오기
             Renderer groundRenderer = groundTransform.GetComponent<Renderer>();
             if (groundRenderer != null)
             {
                 Bounds groundBounds = groundRenderer.bounds;
 
-                // Get the player's current position
+                // 플레이어의 현재 위치 가져오기
                 Vector3 playerPosition = playerInstance.transform.position;
 
-                // Clamp the player's position within the ground's bounds
+                // 플레이어 위치를 바닥의 경계 내로 제한
                 playerPosition.x = Mathf.Clamp(playerPosition.x, groundBounds.min.x, groundBounds.max.x);
                 playerPosition.z = Mathf.Clamp(playerPosition.z, groundBounds.min.z, groundBounds.max.z);
 
-                // Apply the clamped position back to the player
+                // 제한된 위치 적용
                 playerInstance.transform.position = playerPosition;
             }
         }
