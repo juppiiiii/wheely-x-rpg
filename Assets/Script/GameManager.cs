@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     private ObjectManager objectManager;
-    private Transform groundTransform;
+    private UnityEngine.Tilemaps.Tilemap playerTilemap;
 
     void Awake()
     {
@@ -29,29 +29,30 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        InitializeGroundTransform();
+        InitializePlayerTilemap();
         SpawnPlayer();
     }
 
-    private void InitializeGroundTransform()
+    private void InitializePlayerTilemap()
     {
-        GameObject ground = GameObject.Find("Ground");
-        Debug.Log($"Ground 오브젝트 찾기 결과: {(ground != null ? "성공" : "실패")}");
-        
-        if (ground != null)
+        GameObject playerTileObj = GameObject.FindGameObjectWithTag("PlayerTile");
+        if (playerTileObj != null)
         {
-            groundTransform = ground.transform;
-            Debug.Log("Ground Transform이 설정되었습니다.");
+            playerTilemap = playerTileObj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
+            if (playerTilemap == null)
+            {
+                Debug.LogError("PlayerTile의 Tilemap 컴포넌트를 찾을 수 없습니다!");
+            }
         }
         else
         {
-            Debug.LogError("Ground 오브젝트를 찾을 수 없습니다!");
+            Debug.LogError("PlayerTile을 찾을 수 없습니다!");
         }
     }
 
     private void SpawnPlayer()
     {
-        Debug.Log($"SpawnPlayer 시작 - ObjectManager: {(objectManager != null ? "있음" : "없음")}, GroundTransform: {(groundTransform != null ? "있음" : "없음")}");
+        Debug.Log($"SpawnPlayer 시작 - ObjectManager: {(objectManager != null ? "있음" : "없음")}");
         
         if (objectManager == null)
         {
@@ -59,61 +60,78 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (groundTransform == null)
+        // PlayerTile 찾기
+        GameObject playerTileObj = GameObject.FindGameObjectWithTag("PlayerTile");
+        if (playerTileObj == null)
         {
-            Debug.LogError("Ground가 없어 플레이어를 스폰할 수 없습니다!");
+            Debug.LogError("PlayerTile을 찾을 수 없습니다!");
             return;
         }
 
-        // 스폰 위치 계산
-        Vector3 spawnPosition = groundTransform.position;
-        spawnPosition.y = 1f; // 플레이어의 높이 조정
-        Quaternion playerRotation = Quaternion.identity;
+        // Tilemap 컴포넌트 가져오기
+        UnityEngine.Tilemaps.Tilemap tilemap = playerTileObj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
+        if (tilemap == null)
+        {
+            Debug.LogError("Tilemap 컴포넌트를 찾을 수 없습니다!");
+            return;
+        }
 
-        Debug.Log($"플레이어 스폰 시도 - 위치: {spawnPosition}");
+        // 타일맵의 첫 번째 타일 위치 찾기
+        Vector3Int firstTilePosition = new Vector3Int(-2, -11, 0); // Scene에서 확인된 첫 번째 타일 위치
+        Vector3 worldPosition = tilemap.GetCellCenterWorld(firstTilePosition);
+        worldPosition.y = 0.65f;
+
+        Debug.Log($"플레이어 스폰 시도 - 위치: {worldPosition}");
         // ObjectManager를 통해 플레이어 생성
-        GameObject player = objectManager.CreatePlayer(spawnPosition, playerRotation);
+        GameObject player = objectManager.CreatePlayer(worldPosition, Quaternion.Euler(90, 0, 0));
         Debug.Log($"플레이어 스폰 결과: {(player != null ? "성공" : "실패")}");
     }
 
-    // 특정 위치로 이동이 가능한지 체크하는 메서드
     public bool IsMovementPossible(Vector3 position)
     {
-        if (groundTransform == null) return false;
+        if (playerTilemap == null) return false;
 
-        Renderer groundRenderer = groundTransform.GetComponent<Renderer>();
-        if (groundRenderer == null) return false;
-
-        Bounds groundBounds = groundRenderer.bounds;
+        // 월드 좌표를 타일맵 셀 좌표로 변환
+        Vector3Int cellPosition = playerTilemap.WorldToCell(position);
         
-        // 이동하려는 위치가 경계 내에 있는지 확인
-        return position.x >= groundBounds.min.x && 
-                position.x <= groundBounds.max.x && 
-                position.z >= groundBounds.min.z && 
-                position.z <= groundBounds.max.z;
+        // 해당 위치에 타일이 있는지 확인
+        return playerTilemap.HasTile(cellPosition);
     }
 
     void Update()
     {
         GameObject playerInstance = objectManager.PlayerInstance;
-        if (playerInstance != null && groundTransform != null)
+        if (playerInstance != null)
         {
-            // 바닥의 경계 가져오기
-            Renderer groundRenderer = groundTransform.GetComponent<Renderer>();
-            if (groundRenderer != null)
+            Vector3 playerPosition = playerInstance.transform.position;
+            
+            // 현재 위치가 이동 가능한 타일인지 확인
+            if (!IsMovementPossible(playerPosition))
             {
-                Bounds groundBounds = groundRenderer.bounds;
-
-                // 플레이어의 현재 위치 가져오기
-                Vector3 playerPosition = playerInstance.transform.position;
-
-                // 플레이어 위치를 바닥의 경계 내로 제한
-                playerPosition.x = Mathf.Clamp(playerPosition.x, groundBounds.min.x, groundBounds.max.x);
-                playerPosition.z = Mathf.Clamp(playerPosition.z, groundBounds.min.z, groundBounds.max.z);
-
-                // 제한된 위치 적용
-                playerInstance.transform.position = playerPosition;
+                // 이동 불가능한 위치라면 마지막으로 유효했던 위치로 되돌림
+                playerInstance.transform.position = GetLastValidPosition(playerPosition);
             }
         }
+    }
+
+    private Vector3 GetLastValidPosition(Vector3 currentPosition)
+    {
+        // 8방향으로 검사하여 가장 가까운 유효한 위치 찾기
+        Vector3[] directions = {
+            Vector3.left, Vector3.right, Vector3.up, Vector3.down,
+            new Vector3(-1, 1), new Vector3(1, 1), new Vector3(-1, -1), new Vector3(1, -1)
+        };
+
+        foreach (Vector3 dir in directions)
+        {
+            Vector3 testPosition = currentPosition + dir * 0.1f;
+            if (IsMovementPossible(testPosition))
+            {
+                return testPosition;
+            }
+        }
+
+        // 유효한 위치를 찾지 못한 경우 스폰 위치로 돌려보냄
+        return new Vector3(-2, 1, 0);
     }
 }

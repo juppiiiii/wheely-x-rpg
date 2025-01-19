@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Player : MonoBehaviour
 {
@@ -18,6 +19,21 @@ public class Player : MonoBehaviour
 
     // 몇 번 누르면 이동할지 (여기서는 4번 누르면 이동)
     private readonly int requiredPressCount = 4;
+
+    private Tilemap tilemap; // Reference to the tilemap
+
+    void Start()
+    {
+        GameObject tilemapObject = GameObject.FindWithTag("PlayerTile");
+        if (tilemapObject != null)
+        {
+            tilemap = tilemapObject.GetComponent<Tilemap>();
+        }
+        else
+        {
+            Debug.LogError("PlayerTile 태그를 가진 타일맵을 찾을 수 없습니다!");
+        }
+    }
 
     void Update()
     {
@@ -74,8 +90,12 @@ public class Player : MonoBehaviour
             return;
         }
 
-        Vector3 targetPosition = transform.position + (Vector3)direction * moveDistance;
-        
+        Vector3Int currentCell = tilemap.WorldToCell(transform.position);
+        Vector3Int targetCell = currentCell + new Vector3Int((int)direction.x, (int)direction.y, 0);
+
+        Vector3 targetPosition = tilemap.GetCellCenterWorld(targetCell);
+        targetPosition.y = 0.65f;
+
         // 이동 가능한지 체크
         if (GameManager.Instance.IsMovementPossible(targetPosition))
         {
