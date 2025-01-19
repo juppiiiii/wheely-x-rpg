@@ -7,6 +7,8 @@ TagManager:
   - Monster
   - Wall
   - Ground
+  - PlayerTile
+  - MonsterTile
   layers:
   - Default
   - TransparentFX
