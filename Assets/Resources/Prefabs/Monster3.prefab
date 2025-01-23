@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -8650872555397117782}
   - component: {fileID: 957236090070829695}
   - component: {fileID: -8927468084377701759}
+  - component: {fileID: 4951717658353553829}
   m_Layer: 0
   m_Name: Monster3
   m_TagString: Monster
@@ -101,7 +102,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fc9e2acf3cb4f84da769e004d4dd0f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mMs: 5
 --- !u!65 &957236090070829695
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -150,3 +150,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &4951717658353553829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5472176626500447380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 301f01a839b64cf40b0a3733c10b633a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemytype: 2
+  maxHealth: 15
+  currentHealth: 15
+  moveSpeed: 6
+  spawnInterval: 0
+  attackRange: 0
+  attackTime: 0
+  attackCooldownTimer: 0
+  attackDamage: 1
+  Number_of_Monster_Appearances: 0
+  isAttacking: 0
+  isRanged: 0

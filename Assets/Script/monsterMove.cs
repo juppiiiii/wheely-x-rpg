@@ -21,7 +21,7 @@ public class monsterMove : MonoBehaviour
 
     void move()
     {
-        if (isMoving && walktime < stopwalk)
+        if (isMoving) // 이동 중일 때만 이동
         {
             Vector3 dir = new Vector3(0, 0, -1);
             transform.position += dir * monsterStat.moveSpeed * Time.deltaTime;

@@ -3294,8 +3294,7 @@ GameObject:
   - component: {fileID: 1979406990}
   - component: {fileID: 1979406989}
   - component: {fileID: 1979406992}
-  - component: {fileID: 1979406993}
-  - component: {fileID: 1979406994}
+  - component: {fileID: 1979406991}
   m_Layer: 0
   m_Name: MonsterTile
   m_TagString: MonsterTile
@@ -3472,47 +3471,25 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!114 &1979406992
+--- !u!114 &1979406991
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1979406987}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d08ef88d807e5f48b739934d07a03f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 2fc9e2acf3cb4f84da769e004d4dd0f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackCooldown: 4
---- !u!114 &1979406993
-MonoBehaviour:
+--- !u!65 &1979406992
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1979406987}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ca7765425ba380449982b18a76a0a5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tilemap: {fileID: 1979406990}
-  originalColor: {r: 1, g: 1, b: 1, a: 1}
-  yellowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  orangeColor: {r: 1, g: 0.647, b: 0, a: 1}
-  redColor: {r: 1, g: 0, b: 0, a: 1}
-  changeDuration: 2
---- !u!19719996 &1979406994
-TilemapCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1979406987}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -3521,26 +3498,12 @@ TilemapCollider2D:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_MaximumTileChangeCount: 1000
-  m_ExtrusionFactor: 0
-  m_UseDelaunayMesh: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.62, y: 1, z: 0.22}
+  m_Center: {x: 0, y: 0, z: -9.74}
 --- !u!1 &1982473759
 GameObject:
   m_ObjectHideFlags: 0
