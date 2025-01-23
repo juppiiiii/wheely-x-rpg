@@ -105,12 +105,12 @@ public class GameManager : MonoBehaviour
         {
             Vector3 playerPosition = playerInstance.transform.position;
             
-            // 현재 위치가 이동 가능한 타일인지 확인
-            if (!IsMovementPossible(playerPosition))
-            {
-                // 이동 불가능한 위치라면 마지막으로 유효했던 위치로 되돌림
-                playerInstance.transform.position = GetLastValidPosition(playerPosition);
-            }
+            // // 현재 위치가 이동 가능한 타일인지 확인
+            // if (!IsMovementPossible(playerPosition))
+            // {
+            //     // 이동 불가능한 위치라면 마지막으로 유효했던 위치로 되돌림
+            //     playerInstance.transform.position = GetLastValidPosition(playerPosition);
+            // }
         }
     }
 

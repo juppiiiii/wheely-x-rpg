@@ -49,10 +49,16 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q))
         {
             pressCountQ++;
+            if (pressCountQ == 1) 
+            {
+                UIManager.Instance.ShowArrowAbovePlayer(gameObject, true);
+            }
+
             if (pressCountQ >= requiredPressCount)
             {
                 Move(Vector2.left);
                 pressCountQ = 0; // 카운트 초기화
+                UIManager.Instance.RemoveArrow();
             }
         }
 
@@ -60,10 +66,17 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.O))
         {
             pressCountO++;
+
+            if (pressCountO == 1) 
+            {
+                UIManager.Instance.ShowArrowAbovePlayer(gameObject, false);
+            }
+
             if (pressCountO >= requiredPressCount)
             {
                 Move(Vector2.right);
                 pressCountO = 0; // 카운트 초기화
+                UIManager.Instance.RemoveArrow();
             }
         }
 
