@@ -3269,20 +3269,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fc9e2acf3cb4f84da769e004d4dd0f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-<<<<<<< HEAD
 --- !u!65 &1979406992
 BoxCollider:
-=======
---- !u!114 &1979406993
-MonoBehaviour:
->>>>>>> c2ab4479b588ccd71f3683e425134d6b64312fdb
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1979406987}
-<<<<<<< HEAD
-=======
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ca7765425ba380449982b18a76a0a5e, type: 3}
@@ -3298,7 +3291,6 @@ TilemapCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
->>>>>>> c2ab4479b588ccd71f3683e425134d6b64312fdb
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
