@@ -1,1 +1,1 @@
-git merge origin/main 테스트
+git merge origin/main 테스트 2
