@@ -3062,7 +3062,6 @@ GameObject:
   - component: {fileID: 1979406990}
   - component: {fileID: 1979406989}
   - component: {fileID: 1979406992}
-  - component: {fileID: 1979406991}
   m_Layer: 0
   m_Name: MonsterTile
   m_TagString: MonsterTile
@@ -3257,18 +3256,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!114 &1979406991
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1979406987}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fc9e2acf3cb4f84da769e004d4dd0f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &1979406992
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3276,21 +3263,6 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1979406987}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ca7765425ba380449982b18a76a0a5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!19719996 &1979406994
-TilemapCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1979406987}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -3299,12 +3271,12 @@ TilemapCollider2D:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.62, y: 1, z: 0.22}
-  m_Center: {x: 0, y: 0, z: -9.74}
+  m_Size: {x: 4.32, y: 1, z: 0.21}
+  m_Center: {x: 0.11, y: 0, z: -9.71}
 --- !u!1 &1982473759
 GameObject:
   m_ObjectHideFlags: 0
@@ -3727,7 +3699,7 @@ Transform:
   m_GameObject: {fileID: 2142286044}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.15, y: 3.418, z: -8.108926}
+  m_LocalPosition: {x: -2.15, y: 3.294, z: -8.108926}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
