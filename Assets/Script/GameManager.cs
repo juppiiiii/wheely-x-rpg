@@ -15,6 +15,11 @@ public class GameManager : MonoBehaviour
     private bool isWaveActive = false;    // 현재 웨이브가 진행 중인지 여부
     private bool isWaveCleared = false;   // 현재 웨이브 클리어 여부(예: 적을 모두 처치)
 
+    // 웨이브 사이 준비 단계(인터벌) 관련
+    public float waveInterval = 5f;        // 웨이브 종료 후 다음 웨이브 시작까지 대기 시간
+    private float intervalTimer = 0f;       // 준비 단계(인터벌) 경과 시간
+    private bool isIntervalActive = false;  // 웨이브와 웨이브 사이의 준비 단계가 진행 중인지 여부
+
     private bool isBossStage = false;     // 보스전 진입 여부
 
     void Awake()
@@ -119,17 +124,25 @@ public class GameManager : MonoBehaviour
         isWaveActive = false;
         Debug.Log($"Wave {currentWave} 종료!");
 
-        // 다음 웨이브로 넘어가거나 보스 웨이브로 진입
-        currentWave++;
-        if (currentWave <= 10)
+        // 10웨이브까지는 준비 단계(인터벌) 진행
+        if (currentWave < 10)
         {
-            StartWave(currentWave);
+            StartInterval();
         }
         else
         {
-            // 10웨이브 후 보스 스테이지
+            // 10웨이브가 끝났으므로 보스 스테이지로 진입
             StartBossStage();
         }
+
+    }
+
+    // 웨이브와 웨이브 사이 준비 단계(인터벌) 시작
+    private void StartInterval()
+    {
+        isIntervalActive = true;
+        intervalTimer = 0f;
+        Debug.Log("인터벌 시작(준비 단계)...");
     }
 
     // 보스전 시작
@@ -180,6 +193,18 @@ public class GameManager : MonoBehaviour
             if (isWaveCleared)
             {
                 EndWave();
+            }
+        }
+        else if (isIntervalActive)
+        {
+            // 웨이브가 종료되고 인터벌(준비 단계) 중일 때
+            intervalTimer += Time.deltaTime;
+
+            if (intervalTimer >= waveInterval)
+            {
+                // 인터벌 종료 후 다음 웨이브 시작
+                currentWave++;
+                StartWave(currentWave);
             }
         }
     }
