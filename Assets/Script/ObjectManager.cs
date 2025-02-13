@@ -25,7 +25,7 @@ public class ObjectManager : MonoBehaviour
     [Header("프리팹 경로")]
     [SerializeField] private string playerPrefabPath = "Prefabs/Player";
 
-    private GameObject playerInstance;
+    public GameObject playerInstance;
     public GameObject PlayerInstance => playerInstance;
 
     void Awake()
