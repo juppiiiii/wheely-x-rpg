@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections;
 
 public class Player : MonoBehaviour
 {
@@ -27,6 +28,11 @@ public class Player : MonoBehaviour
     private float currentHealth;                      // 현재 체력
     [SerializeField] private float defense = 10f;     // 방어력
 
+    [Header("Attack Settings")]
+    [SerializeField] private float attackDamage = 1f;    // 기본 공격력
+    [SerializeField] private float attackRange = 1f;      // 공격 범위 (1칸)
+    private bool isDefending = false;                     // 방어 상태
+
     void Start()
     {
         GameObject tilemapObject = GameObject.FindWithTag("PlayerTile");
@@ -45,9 +51,15 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (isMoving) return;  // 이미 이동 중이라면 입력받지 않음
+        if (isMoving) return;
 
         CheckKeyInput();
+
+        // 행동 게이지가 찼을 때 추가 입력 확인
+        if (GameManager.Instance.currentState == GameManager.ActionState.ReadyToAct)
+        {
+            CheckActionInput();
+        }
     }
 
     /// <summary>
@@ -115,9 +127,22 @@ public class Player : MonoBehaviour
         }
     }
 
-    /// <summary>
+    /// 행동 게이지가 찼을 때의 입력을 확인하는 메서드
+    private void CheckActionInput()
+    {
+        // A키로 공격
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            Attack();
+        }
+        // L키로 방어
+        else if (Input.GetKeyDown(KeyCode.L))
+        {
+            Defend();
+        }
+    }
+
     /// 실제 이동 처리(누적된 입력이 조건을 만족하면 한 칸 즉시 이동)
-    /// </summary>
     private void Move(Vector2 direction)
     {
         if (GameManager.Instance == null)
@@ -141,13 +166,84 @@ public class Player : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 대미지를 받는 메서드 (방어력을 고려해 실제 받는 대미지를 계산)
-    /// </summary>
+    /// 공격 실행 메서드
+    private void Attack()
+    {
+        // 공격 실행 시 로그 출력
+        Debug.Log("공격 실행!");
+        GameManager.Instance.ExecuteAction("attack");
+
+        /* 기존 몬스터 탐지 및 공격 로직은 주석 처리
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);
+        bool hasAttacked = false;
+
+        foreach (var hitCollider in hitColliders)
+        {
+            // Monster 태그를 가진 오브젝트 찾기
+            if (hitCollider.CompareTag("Monster"))
+            {
+                MonsterStat monster = hitCollider.GetComponent<MonsterStat>();
+                if (monster != null)
+                {
+                    // 몬스터와의 거리 계산 (2D 평면상에서)
+                    Vector2 monsterPos2D = new Vector2(monster.transform.position.x, monster.transform.position.z);
+                    Vector2 playerPos2D = new Vector2(transform.position.x, transform.position.z);
+                    float distance = Vector2.Distance(monsterPos2D, playerPos2D);
+
+                    // 정확히 1칸 거리에 있는 몬스터만 공격
+                    if (Mathf.Approximately(distance, moveDistance))
+                    {
+                        monster.TakeDamage(attackDamage);
+                        hasAttacked = true;
+                        Debug.Log($"몬스터 공격! 거리: {distance}");
+                    }
+                }
+            }
+        }
+
+        if (hasAttacked)
+        {
+            GameManager.Instance.ExecuteAction("attack");
+        }
+        else
+        {
+            Debug.Log("공격 범위 내에 몬스터가 없습니다!");
+        }
+        */
+    }
+
+    /// 방어 실행 메서드
+    private void Defend()
+    {
+        isDefending = true;
+        defense *= 2; // 방어력 2배 증가
+        GameManager.Instance.ExecuteAction("defend");
+
+        // 1턴 동안만 방어 상태 유지
+        StartCoroutine(EndDefendNextTurn());
+    }
+
+    /// 다음 턴에 방어 상태를 해제하는 코루틴
+    private IEnumerator EndDefendNextTurn()
+    {
+        yield return new WaitForSeconds(GameManager.Instance.turnDuration);
+        isDefending = false;
+        defense /= 2; // 방어력 원래대로 복구
+        Debug.Log("방어 상태 해제");
+    }
+
+    /// 대미지를 받는 메서드 수정 (방어 상태 고려)
     public void TakeDamage(float damage)
     {
         float finalDamage = damage - defense;
-        if (finalDamage < 0f) finalDamage = 0f; // 방어력이 대미지를 초과하면 0으로 처리
+        if (finalDamage < 0f) finalDamage = 0f;
+
+        // 방어 상태일 때는 추가 대미지 감소
+        if (isDefending)
+        {
+            finalDamage *= 0.5f; // 방어 상태에서는 대미지 50% 추가 감소
+            Debug.Log("방어 상태: 대미지 감소!");
+        }
 
         currentHealth -= finalDamage;
         Debug.Log($"플레이어가 {finalDamage} 피해를 받음. 남은 체력: {currentHealth}");
@@ -158,9 +254,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    /// <summary>
     /// 체력을 회복하는 메서드
-    /// </summary>
     public void Heal(float amount)
     {
         currentHealth += amount;
