@@ -79,16 +79,10 @@ public class UIManager : MonoBehaviour
     }
     public void RemoveArrow()
     {
-        Debug.Log("Current Arrow Instance: " + arrowInstance);
         if (arrowInstance != null)
         {
             Destroy(arrowInstance);
             arrowInstance = null;
-            Debug.Log("Arrow removed");
-        }
-        else
-        {
-            Debug.Log("No arrow to remove");
         }
     }
 }
