@@ -37,15 +37,21 @@ public class GameManager : MonoBehaviour
     private float lastInputTime = 0f;     // 마지막 입력 시간
     private const float INPUT_THRESHOLD = 1f; // 입력 감지 임계값
 
-    // 행동 상태
-    private enum ActionState
+    public enum ActionState
     {
         Idle,
         Charging,
         ReadyToAct,
         Acting
     }
-    private ActionState currentState = ActionState.Idle;
+    private ActionState _currentState = ActionState.Idle;
+    
+    // currentState에 대한 public 프로퍼티 추가
+    public ActionState currentState
+    {
+        get { return _currentState; }
+        private set { _currentState = value; }
+    }
 
     void Awake()
     {
@@ -69,11 +75,19 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        // 저장된 데이터 불러오기
-        DataManager.instance.loadData();
-
-        // 저장된 currentWave 적용
-        currentWave = DataManager.instance.nowPlayer.currentWave;
+        // DataManager 존재 여부 확인
+        if (DataManager.instance != null)
+        {
+            // 저장된 데이터 불러오기
+            DataManager.instance.loadData();
+            // 저장된 currentWave 적용
+            currentWave = DataManager.instance.nowPlayer.currentWave;
+        }
+        else
+        {
+            Debug.LogWarning("DataManager가 없습니다. 기본 웨이브 값을 사용합니다.");
+            currentWave = 1; // 기본값 설정
+        }
 
         InitializePlayerTilemap();
         SpawnPlayer();
@@ -132,7 +146,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log($"플레이어 스폰 시도 - 위치: {worldPosition}");
         // ObjectManager를 통해 플레이어 생성
-        GameObject player = objectManager.CreatePlayer(worldPosition, Quaternion.Euler(90, 0, 0));
+        GameObject player = objectManager.CreatePlayer(worldPosition, Quaternion.Euler(90, 180, 0));
         Debug.Log($"플레이어 스폰 결과: {(player != null ? "성공" : "실패")}");
     }
 
@@ -143,7 +157,7 @@ public class GameManager : MonoBehaviour
         isWaveCleared = false;
         waveTimer = 0f;
 
-        Debug.Log($"Wave {waveNumber} 시작!");
+        Debug.Log($"Wave {waveNumber} 시작! 총 진행 시간: {waveDuration}초");
 
         // 웨이브에 따른 스폰 로직 추가(예: 적 스폰)
         // 예: objectManager.CreateEnemy(...); 등등
@@ -153,11 +167,19 @@ public class GameManager : MonoBehaviour
     private void EndWave()
     {
         isWaveActive = false;
-        Debug.Log($"Wave {currentWave} 종료!");
+        Debug.Log($"Wave {currentWave} 종료! 실제 진행 시간: {waveTimer}초");
 
-        // 현재 웨이브 값을 저장
-        DataManager.instance.nowPlayer.currentWave = currentWave;
-        DataManager.instance.saveData();
+        // DataManager가 존재할 경우에만 저장 진행
+        if (DataManager.instance != null)
+        {
+            DataManager.instance.nowPlayer.currentWave = currentWave;
+            DataManager.instance.saveData();
+            Debug.Log($"Wave {currentWave} 데이터 저장 완료");
+        }
+        else
+        {
+            Debug.LogWarning("DataManager가 없어 진행상황이 저장되지 않습니다.");
+        }
 
         // 10웨이브까지는 인터벌 시작
         if (currentWave < 10)
@@ -168,7 +190,6 @@ public class GameManager : MonoBehaviour
         {
             StartBossStage();
         }
-
     }
 
     // 웨이브와 웨이브 사이 준비 단계(인터벌) 시작
@@ -192,9 +213,6 @@ public class GameManager : MonoBehaviour
     // Update 내에서 웨이브 타이머 및 클리어 조건 체크
     void Update()
     {   
-        // 현재 웨이브 및 진행 시간 출력
-        Debug.Log($"Wave {currentWave} - 진행 시간: {waveTimer:F1} / {waveDuration:F1}");
-
 
         // TODO: 플레이어 Tilemap 검사 로직(원본)
         GameObject playerInstance = objectManager.PlayerInstance;
@@ -255,26 +273,23 @@ public class GameManager : MonoBehaviour
 
         turnTimer += Time.deltaTime;
         
-        // 입력 감지 및 행동 게이지 처리
         if (CheckForContinuousInput())
         {
-            if (currentState == ActionState.Idle)
+            if (_currentState == ActionState.Idle)
             {
-                currentState = ActionState.Charging;
+                _currentState = ActionState.Charging;
             }
 
-            if (currentState == ActionState.Charging)
+            if (_currentState == ActionState.Charging)
             {
                 ChargeActionGauge();
             }
         }
         else
         {
-            // 입력이 없으면 충전 중지
             isCharging = false;
         }
 
-        // 턴 종료 조건 체크
         if (turnTimer >= turnDuration)
         {
             EndTurn();
@@ -286,7 +301,7 @@ public class GameManager : MonoBehaviour
         isTurnActive = true;
         turnTimer = 0f;
         currentActionGauge = 0f;
-        currentState = ActionState.Idle;
+        _currentState = ActionState.Idle;
         Debug.Log("새로운 턴 시작!");
     }
 
@@ -294,7 +309,7 @@ public class GameManager : MonoBehaviour
     {
         isTurnActive = false;
         isCharging = false;
-        currentState = ActionState.Idle;
+        _currentState = ActionState.Idle;
         Debug.Log("턴 종료!");
     }
 
