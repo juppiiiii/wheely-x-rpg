@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     // 웨이브 관련 변수
     [Header("Wave Settings")]
     public int currentWave = 1;           // 현재 웨이브 번호, TODO: 플레이어 데이터에서 로드
-    public float waveDuration = 10f;     // 웨이브당 시간(초), TODO: 추후 180초(3분)으로 변경
+    public float waveDuration = 180f;     // 웨이브당 시간(초), TODO: 추후 180초(3분)으로 변경
     private float waveTimer = 0f;         // 웨이브 경과 시간
     private bool isWaveActive = false;    // 현재 웨이브가 진행 중인지 여부
     private bool isWaveCleared = false;   // 현재 웨이브 클리어 여부(예: 적을 모두 처치)
@@ -21,6 +21,31 @@ public class GameManager : MonoBehaviour
     private bool isIntervalActive = false;  // 웨이브와 웨이브 사이의 준비 단계가 진행 중인지 여부
 
     private bool isBossStage = false;     // 보스전 진입 여부
+
+    // 턴 관련 변수
+    [Header("Turn Settings")]
+    public float turnDuration = 10f;      // 한 턴당 기본 시간
+    private float turnTimer = 0f;         // 현재 턴 경과 시간
+    private bool isTurnActive = false;    // 현재 턴 진행 중 여부
+    
+    // 행동 게이지 관련 변수
+    [Header("Action Gauge")]
+    public float maxActionGauge = 100f;   // 최대 행동 게이지
+    public float currentActionGauge = 0f; // 현재 행동 게이지
+    public float chargeRate = 20f;        // 초당 충전량 (5초 완충 = 100/5 = 20)
+    private bool isCharging = false;      // 충전 중 여부
+    private float lastInputTime = 0f;     // 마지막 입력 시간
+    private const float INPUT_THRESHOLD = 1f; // 입력 감지 임계값
+
+    // 행동 상태
+    private enum ActionState
+    {
+        Idle,
+        Charging,
+        ReadyToAct,
+        Acting
+    }
+    private ActionState currentState = ActionState.Idle;
 
     void Awake()
     {
@@ -189,16 +214,18 @@ public class GameManager : MonoBehaviour
         // 웨이브 진행 중이라면 시간 체크
         if (isWaveActive)
         {
+            // 웨이브 타이머 업데이트
             waveTimer += Time.deltaTime;
 
-            // 웨이브 시간(3분) 초과 혹은 적 처치 등으로 클리어 조건만 맞으면 isWaveCleared = true 처리
-            // 여기서는 예시로 3분이 지나면 자동 웨이브 클리어로 가정
+            // 턴 시스템 업데이트
+            UpdateTurnSystem();
+
+            // 웨이브 종료 조건 체크
             if (waveTimer >= waveDuration)
             {
                 isWaveCleared = true;
             }
 
-            // 웨이브 클리어 조건을 만족하면 웨이브 종료
             if (isWaveCleared)
             {
                 EndWave();
@@ -216,6 +243,110 @@ public class GameManager : MonoBehaviour
                 StartWave(currentWave);
             }
         }
+    }
+
+    private void UpdateTurnSystem()
+    {
+        if (!isTurnActive)
+        {
+            StartNewTurn();
+            return;
+        }
+
+        turnTimer += Time.deltaTime;
+        
+        // 입력 감지 및 행동 게이지 처리
+        if (CheckForContinuousInput())
+        {
+            if (currentState == ActionState.Idle)
+            {
+                currentState = ActionState.Charging;
+            }
+
+            if (currentState == ActionState.Charging)
+            {
+                ChargeActionGauge();
+            }
+        }
+        else
+        {
+            // 입력이 없으면 충전 중지
+            isCharging = false;
+        }
+
+        // 턴 종료 조건 체크
+        if (turnTimer >= turnDuration)
+        {
+            EndTurn();
+        }
+    }
+
+    private void StartNewTurn()
+    {
+        isTurnActive = true;
+        turnTimer = 0f;
+        currentActionGauge = 0f;
+        currentState = ActionState.Idle;
+        Debug.Log("새로운 턴 시작!");
+    }
+
+    private void EndTurn()
+    {
+        isTurnActive = false;
+        isCharging = false;
+        currentState = ActionState.Idle;
+        Debug.Log("턴 종료!");
+    }
+
+    private bool CheckForContinuousInput()
+    {
+        // 키보드 입력 감지
+        bool hasInput = Input.anyKey;
+        
+        if (hasInput)
+        {
+            lastInputTime = Time.time;
+            return true;
+        }
+
+        // 마지막 입력으로부터 임계값 이내인지 확인
+        return Time.time - lastInputTime < INPUT_THRESHOLD;
+    }
+
+    private void ChargeActionGauge()
+    {
+        if (currentActionGauge < maxActionGauge)
+        {
+            currentActionGauge += chargeRate * Time.deltaTime;
+            
+            // 게이지가 다 찼을 때
+            if (currentActionGauge >= maxActionGauge)
+            {
+                currentActionGauge = maxActionGauge;
+                currentState = ActionState.ReadyToAct;
+                Debug.Log("행동 게이지 완충! 행동 가능!");
+            }
+        }
+    }
+
+    // 행동 실행 함수 (공격/방어)
+    public void ExecuteAction(string actionType)
+    {
+        if (currentState != ActionState.ReadyToAct) return;
+
+        switch (actionType.ToLower())
+        {
+            case "attack":
+                Debug.Log("공격 행동 실행!");
+                break;
+            case "defend":
+                Debug.Log("방어 행동 실행!");
+                break;
+        }
+
+        // 행동 후 게이지 리셋
+        currentActionGauge = 0f;
+        currentState = ActionState.Idle;
     }
 
     // 이동 가능 여부 체크
