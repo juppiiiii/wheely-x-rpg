@@ -44,6 +44,12 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        // 저장된 데이터 불러오기
+        DataManager.instance.loadData();
+
+        // 저장된 currentWave 적용
+        currentWave = DataManager.instance.nowPlayer.currentWave;
+
         InitializePlayerTilemap();
         SpawnPlayer();
 
@@ -124,14 +130,17 @@ public class GameManager : MonoBehaviour
         isWaveActive = false;
         Debug.Log($"Wave {currentWave} 종료!");
 
-        // 10웨이브까지는 준비 단계(인터벌) 진행
+        // 현재 웨이브 값을 저장
+        DataManager.instance.nowPlayer.currentWave = currentWave;
+        DataManager.instance.saveData();
+
+        // 10웨이브까지는 인터벌 시작
         if (currentWave < 10)
         {
             StartInterval();
         }
         else
         {
-            // 10웨이브가 끝났으므로 보스 스테이지로 진입
             StartBossStage();
         }
 

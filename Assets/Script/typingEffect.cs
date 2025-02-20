@@ -7,40 +7,40 @@ using UnityEngine.Rendering;
 public class TypingEffect : MonoBehaviour
 {
     public Text tx;
-    public Image img; // ÀÌ¹ÌÁö ÄÄÆ÷³ÍÆ® Ãß°¡
+    public Image img; // ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ß°ï¿½
     private string[] m_texts = {
-        "¿©ÇàÀ» ÇÏ´ÂÁß... ½É»óÄ¡ ¾ÊÀº ±â¿îÀÌ °¨µ¹°í ÁÖº¯ »ç¶÷µéÀÌ ¾²·¯Á®ÀÖ´Ù... ¹«½¼ÀÏÀÌÁö?",
-        "ÀÌ°÷Àº µµ´ëÃ¼ ¾î¶² °÷ÀÏ±î?",
-        "ÁÖº¯À» »ìÆìºÁ¾ß°Ú´Ù.",
-        "Á¤¸éÀ» ÁÖ½ÃÇÑ ¼ø°£ ³ª´Â ¸öÀÌ ¸ØÃç¹ö·È´Ù.",
-        "¸ó½ºÅÍµé°ú ´«ÀÌ ¸¶ÁÖÃÆ°í ÇÑ¹ßÀÚ±¹¾¿ ÀûµéÀÌ ´Ù°¡¿À±â ½ÃÀÛÇÑ´Ù.",
-        "Á×Áö ¾ÊÀ¸·Á¸é ÇìÃÄ³ª°¡¾ßÇÑ´Ù... ¿Â´Ù...!"
+        "ëª¨í—˜ì„ ë– ë‚˜ê³  ìžˆëŠ” ì¤‘ ì‚¬ëžŒë“¤ì´ ì“°ëŸ¬ì ¸ ìžˆê³  ìˆ˜ìƒí•œ ê¸°ìš´ì´ ëŠê»´ì§„ë‹¤... ",
+        "ëŒ€ì²´ ë¬´ìŠ¨ì¼ì´ì§€",
+        "í•œë²ˆ ì£¼ë³€ì„ ëŒì•„ë´ì•¼ê² ë‹¤.",
+        "ëŒì•„ë³¸ ìˆœê°„ ëª¸ì´ êµ³ì–´ë²„ë ¸ë‹¤.",
+        "ë‹¤ì–‘í•œ ëª¬ìŠ¤í„°ë“¤ì´ ì£¼ë³€ì•  í¬ì§„ë˜ì–´ìžˆì–´ ìˆ¨ì„ ì£½ì´ê³  ì³ë‹¤ë³´ê³ ìžˆì—ˆëŠ”ë°...",
+        "ì•„ë‹ˆ ì–´ë–»ê²Œ ì•Œì•„ë´¤ì§€? ë‚˜í•œí…Œ ë‹¤ê°€ì˜¨ë‹¤ ì‚´ì•„ì•¼í•œë‹¤ ë°˜ë“œì‹œ!"
     };
     private int currentTextIndex = 0;
 
     void Start()
     {
-        // Ã¹ ¹øÂ° ¹®Àå Å¸ÀÌÇÎ ½ÃÀÛ
+        // Ã¹ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         StartCoroutine(TypeText(m_texts[currentTextIndex]));
         ChangeImage();
     }
 
     private void Update()
     {
-        // ÇöÀç ¹®ÀåÀÌ ³¡³­ ÈÄ ¿£ÅÍ Å° ÀÔ·Â ½Ã ´ÙÀ½ ¹®ÀåÀ¸·Î ÀÌµ¿
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å° ï¿½Ô·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
         if (Input.GetKeyDown(KeyCode.A)|| Input.GetKeyDown(KeyCode.S))
         {
             if (currentTextIndex < m_texts.Length - 1)
             {
                 currentTextIndex++;
-                ChangeImage(); // ´ë»ç º¯°æ Àü¿¡ ÀÌ¹ÌÁö º¯°æ
+                ChangeImage(); // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 StartCoroutine(TypeText(m_texts[currentTextIndex]));
                 
                
             }
             else
             {
-                // ¸ðµç ¹®ÀåÀÌ ³¡³­ ÈÄ ÀÌ¹ÌÁö º¯°æ
+                // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 ChangeImageAndContinue();
             }
         }
@@ -48,7 +48,7 @@ public class TypingEffect : MonoBehaviour
 
     IEnumerator TypeText(string text)
     {
-        tx.text = ""; // ÅØ½ºÆ® ÃÊ±âÈ­
+        tx.text = ""; // ï¿½Ø½ï¿½Æ® ï¿½Ê±ï¿½È­
 
         for (int i = 0; i <= text.Length; i++)
         {
@@ -59,24 +59,24 @@ public class TypingEffect : MonoBehaviour
 
     void ChangeImageAndContinue()
     {
-        // ÇöÀç ´ë»ç ÀÎµ¦½º¿¡ µû¶ó ÀÌ¹ÌÁö º¯°æ
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         ChangeImage();
 
         
-        SceneManager.LoadScene("Alpha_2_Scene"); // ¾À ÀÌ¸§À» ÀûÀýÈ÷ º¯°æÇÏ¼¼¿ä
+        SceneManager.LoadScene("4.Game_Scene"); // ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½
 
     }
 
     void ChangeImage()
     {
-        // ÀÌ¹ÌÁö º¯°æ ·ÎÁ÷
-        if (currentTextIndex < 3) // 0, 1, 2 ÀÎµ¦½º¿¡ ÇØ´çÇÏ´Â °æ¿ì
+        // ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        if (currentTextIndex < 3) // 0, 1, 2 ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½
         {
-            img.sprite = Resources.Load<Sprite>("story_img1"); // Ã¹ ¹øÂ° ÀÌ¹ÌÁö
+            img.sprite = Resources.Load<Sprite>("story_img1"); // Ã¹ ï¿½ï¿½Â° ï¿½Ì¹ï¿½ï¿½ï¿½
         }
-        else // 3, 4, 5 ÀÎµ¦½º¿¡ ÇØ´çÇÏ´Â °æ¿ì
+        else // 3, 4, 5 ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½
         {
-            img.sprite = Resources.Load<Sprite>("story_img2"); // µÎ ¹øÂ° ÀÌ¹ÌÁö
+            img.sprite = Resources.Load<Sprite>("story_img2"); // ï¿½ï¿½ ï¿½ï¿½Â° ï¿½Ì¹ï¿½ï¿½ï¿½
         }
     }
 }

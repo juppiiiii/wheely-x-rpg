@@ -10,7 +10,7 @@ public class backGroundMusic : MonoBehaviour
         if (bgmSource != null && bgmClip != null)
         {
             bgmSource.clip = bgmClip;
-            bgmSource.loop = true; // BGM ¹İº¹ Àç»ı
+            bgmSource.loop = true; // BGM ë°˜ë³µ ì¬ìƒ
             bgmSource.Play();
         }
     }

@@ -4,16 +4,16 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    public Button[] menuButtons; // ¸Ş´º ¹öÆ° ¹è¿­
-    private int selectedIndex = 0; // ÇöÀç ¼±ÅÃµÈ ÀÎµ¦½º
-    private int keyPressCount = 0; // Å° ´©¸¥ È½¼ö Ä«¿îÅÍ
+    public Button[] menuButtons; // ë©”ë‰´ ë²„íŠ¼ ë°°ì—´
+    private int selectedIndex = 0; // í˜„ì¬ ì„ íƒëœ ì¸ë±ìŠ¤
+    private int keyPressCount = 0; // í‚¤ ëˆ„ë¥¸ íšŸìˆ˜ ì¹´ìš´í„°
    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Debug.Log("Menu Buttons Count: " + menuButtons.Length);
-        selectedIndex = 1; // ÀÌ¾îÇÏ±â ¹öÆ°ÀÇ ÀÎµ¦½º¿¡ ¸Â°Ô ¼öÁ¤
+        selectedIndex = 1; // ì´ì–´í•˜ê¸° ë²„íŠ¼ì˜ ì¸ë±ìŠ¤ì— ë§ê²Œ ìˆ˜ì •
         UpdateMenuSelection();
 
   
@@ -23,28 +23,28 @@ public class MainMenu : MonoBehaviour
     void Update()
     {
 
-        // À§ÂÊ È­»ìÇ¥ Å° ÀÔ·Â
-        if (Input.GetKeyDown(KeyCode.O)) // À§·Î ÀÌµ¿
+        // ìœ„ìª½ í™”ì‚´í‘œ í‚¤ ì…ë ¥
+        if (Input.GetKeyDown(KeyCode.O)) // ìœ„ë¡œ ì´ë™
         {
             selectedIndex = (selectedIndex - 1 + menuButtons.Length) % menuButtons.Length;
             UpdateMenuSelection();
         }
-        else if (Input.GetKeyDown(KeyCode.L)) // ¾Æ·¡·Î ÀÌµ¿
+        else if (Input.GetKeyDown(KeyCode.L)) // ì•„ë˜ë¡œ ì´ë™
         {
             selectedIndex = (selectedIndex + 1) % menuButtons.Length;
             UpdateMenuSelection();
         }
 
-        // 'a' ¶Ç´Â 's' Å° ÀÔ·Â
+        // 'a' ë˜ëŠ” 's' í‚¤ ì…ë ¥
         if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.A))
         {
-            keyPressCount++; // Ä«¿îÅÍ Áõ°¡
+            keyPressCount++; // ì¹´ìš´í„° ì¦ê°€
             Debug.Log(keyPressCount);
-            // 4¹ø ´©¸£¸é ¼±ÅÃµÈ ¹öÆ° Å¬¸¯
+            // 4ë²ˆ ëˆ„ë¥´ë©´ ì„ íƒëœ ë²„íŠ¼ í´ë¦­
             if (keyPressCount >= 4)
             {
-                menuButtons[selectedIndex].onClick.Invoke(); // ¼±ÅÃµÈ ¹öÆ° Å¬¸¯
-                keyPressCount = 0; // Ä«¿îÅÍ ÃÊ±âÈ­
+                menuButtons[selectedIndex].onClick.Invoke(); // ì„ íƒëœ ë²„íŠ¼ í´ë¦­
+                keyPressCount = 0; // ì¹´ìš´í„° ì´ˆê¸°í™”
                 
             }
             
@@ -53,37 +53,38 @@ public class MainMenu : MonoBehaviour
 
     void UpdateMenuSelection()
     {
-        // ¸ğµç ¹öÆ°ÀÇ ÇÏÀÌ¶óÀÌÆ® »óÅÂ ÃÊ±âÈ­
+        // ëª¨ë“  ë²„íŠ¼ì˜ í•˜ì´ë¼ì´íŠ¸ ìƒíƒœ ì´ˆê¸°í™”
         foreach (Button button in menuButtons)
         {
             ColorBlock colors = button.colors;
-            colors.normalColor = Color.white; // ±âº» »ö»ó
-            colors.highlightedColor = Color.cyan; // ¸¶¿ì½º ¿À¹ö ½Ã »ö»ó
-            colors.pressedColor = Color.green; // Å¬¸¯ ½Ã »ö»ó
+            colors.normalColor = Color.white; // ê¸°ë³¸ ìƒ‰ìƒ
+            colors.highlightedColor = Color.cyan; // ë§ˆìš°ìŠ¤ ì˜¤ë²„ ì‹œ ìƒ‰ìƒ
+            colors.pressedColor = Color.green; // í´ë¦­ ì‹œ ìƒ‰ìƒ
             button.colors = colors;
         }
 
-        // ¼±ÅÃµÈ ¹öÆ° ÇÏÀÌ¶óÀÌÆ®
+        // ì„ íƒëœ ë²„íŠ¼ í•˜ì´ë¼ì´íŠ¸
         ColorBlock selectedColors = menuButtons[selectedIndex].colors;
-        selectedColors.normalColor = Color.yellow; // ÇÏÀÌ¶óÀÌÆ® »ö»ó
-        selectedColors.highlightedColor = Color.red; // ¼±ÅÃµÈ ¹öÆ° ¸¶¿ì½º ¿À¹ö ½Ã »ö»ó
-        selectedColors.pressedColor = Color.magenta; // ¼±ÅÃµÈ ¹öÆ° Å¬¸¯ ½Ã »ö»ó
+        selectedColors.normalColor = Color.yellow; // í•˜ì´ë¼ì´íŠ¸ ìƒ‰ìƒ
+        selectedColors.highlightedColor = Color.red; // ì„ íƒëœ ë²„íŠ¼ ë§ˆìš°ìŠ¤ ì˜¤ë²„ ì‹œ ìƒ‰ìƒ
+        selectedColors.pressedColor = Color.magenta; // ì„ íƒëœ ë²„íŠ¼ í´ë¦­ ì‹œ ìƒ‰ìƒ
         menuButtons[selectedIndex].colors = selectedColors;
     }
 
     public void OnClickNewGame()
     {
-        SceneManager.LoadScene("story_Scene");
+        SceneManager.LoadScene("2.story_Scene");
     }
 
     public void OnClickLoad()
     {
-        Debug.Log("ºÒ·¯¿À±â");
+        SceneManager.LoadScene("3.Select_Scene");
+        Debug.Log("ë¶ˆëŸ¬ì˜¤ê¸°");
     }
 
     public void OnClickOption()
     {
-        Debug.Log("¿É¼Ç");
+        Debug.Log("ì˜µì…˜");
     }
 
     public void OnClickQuit()
