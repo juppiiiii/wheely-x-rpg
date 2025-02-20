@@ -1,17 +1,17 @@
 using UnityEngine;
 
-public class monsterMove : MonoBehaviour
+public class MonsterMove : MonoBehaviour
 {
     float walktime = 0f;
     float stopwalk = 2.1f;
-    float moveDuration = 0.5f; // 0.5ÃÊ µ¿¾È ÀÌµ¿
-    bool isMoving = true; // ÀÌµ¿ ÁßÀÎÁö ¿©ºÎ
+    float moveDuration = 0.5f;
+    bool isMoving = true; // ì´ë™ ì—¬ë¶€
     bool isTileMoving = true;
-    monsterStat monsterStat;
+    MonsterStat monsterStat;
 
     void Start()
     {
-        monsterStat = GetComponent<monsterStat>();
+        monsterStat = GetComponent<MonsterStat>();
     }
 
     void Update()
@@ -21,7 +21,7 @@ public class monsterMove : MonoBehaviour
 
     void move()
     {
-        if (isMoving) // ÀÌµ¿ ÁßÀÏ ¶§¸¸ ÀÌµ¿
+        if (isMoving) // ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
         {
             Vector3 dir = new Vector3(0, 0, -1);
             transform.position += dir * monsterStat.moveSpeed * Time.deltaTime;
@@ -33,8 +33,8 @@ public class monsterMove : MonoBehaviour
     {
         if (other.CompareTag("MonsterTile"))
         {
-            isTileMoving = true; // MonsterTile¿¡ ´êÀ¸¸é ÀÌµ¿ ½ÃÀÛ
-            isMoving = false; // ÀÌµ¿À» ¸ØÃã
+            isTileMoving = true; // MonsterTileï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½
+            isMoving = false; // ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         }
     }
 }

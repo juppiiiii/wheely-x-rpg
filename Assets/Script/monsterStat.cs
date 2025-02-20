@@ -1,12 +1,11 @@
 using System.Collections;
 using UnityEngine;
 
-public class monsterStat : MonoBehaviour
+public class MonsterStat : MonoBehaviour
 {
-    // ¸ó½ºÅÍ Å¸ÀÔ 
+    // ê¸°ì¡´ ì½”ë“œ ìœ ì§€
     public enum Type { A, B, C, D };
     public Type enemytype;
-    // ¸ó½ºÅÍ ½ºÅÈ
     public int maxHealth = 15;
     public int currentHealth = 15;
     public float moveSpeed = 0f;
@@ -14,53 +13,70 @@ public class monsterStat : MonoBehaviour
     
     public int attackRange = 0;
     public int attackTime = 0;
-    public int attackCooldownTimer = 0; // ³²Àº ÄğÅ¸ÀÓ ½Ç½Ã°£ ¹İ¿µ
-    public int attackDamage = 1;        // ¸ó½ºÅÍ ¿ÀºêÁ§Æ®°¡ °ø°İÇÏ´Â µ¥¹ÌÁö
+    public int attackCooldownTimer = 0;
+    public int attackDamage = 1;
     public int Number_of_Monster_Appearances = 0;
     public bool isAttacking = false;
     public bool isRanged = false;
 
-    
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        currentHealth = maxHealth;
     }
 
-    // Update is called once per frame
+    /// ë°ë¯¸ì§€ë¥¼ ë°›ëŠ” ë©”ì„œë“œ
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= (int)damage;
+        Debug.Log($"ëª¬ìŠ¤í„°ê°€ {damage} í”¼í•´ë¥¼ ë°›ìŒ. ë‚¨ì€ ì²´ë ¥: {currentHealth}");
+
+        // TODO: í”¼ê²© íš¨ê³¼ ì¶”ê°€ (ìƒ‰ìƒ ë³€ê²½ ë“±)
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    /// <summary>
+    /// ëª¬ìŠ¤í„° ì‚¬ë§ ì²˜ë¦¬
+    /// </summary>
+    private void Die()
+    {
+        Debug.Log("ëª¬ìŠ¤í„° ì²˜ì¹˜!");
+        // TODO: ê²½í—˜ì¹˜ ë“œë¡­, ì•„ì´í…œ ë“œë¡­ ë“±ì˜ ì²˜ë¦¬
+        Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// í”Œë ˆì´ì–´ ê³µê²©
+    /// </summary>
+    public void AttackPlayer(Player player)
+    {
+        if (!isAttacking && attackCooldownTimer <= 0)
+        {
+            isAttacking = true;
+            if (player != null)
+            {
+                player.TakeDamage(attackDamage);
+            }
+            attackCooldownTimer = attackTime;
+            StartCoroutine(ResetAttackState());
+        }
+    }
+
+    private IEnumerator ResetAttackState()
+    {
+        yield return new WaitForSeconds(attackTime);
+        isAttacking = false;
+    }
+
     void Update()
     {
-        //shotDamage();
-        //ChangeColorCoroutine();
+        // ê³µê²© ì¿¨ë‹¤ìš´ ê°ì†Œ
+        if (attackCooldownTimer > 0)
+        {
+            attackCooldownTimer--;
+        }
     }
-
-    void monsterAttack()
-    {
-
-    }
-
-    void takeDamage(int Damage)
-    {
-        // µ¥¹ÌÁö¸¦ ¹Ş´Â ·ÎÁ÷
-    }
-
-    //void shotDamage()
-    //{
-    //    if (attackCooldown >= 0)
-    //    {
-    //        // °ø°İ ¼öÇà
-    //        //Debug.Log("°ø°İÀ» ¼öÇàÇß½À´Ï´Ù! µ¥¹ÌÁö: " + attackDamage);
-    //        // ÄğÅ¸ÀÓ ¼³Á¤
-    //        attackCooldown -= 1;
-    //        attackCooldownTimer = attackCooldown;
-    //    }
-       
-        
-    //    Debug.Log("ÄğÅ¸ÀÓ ÁßÀÔ´Ï´Ù. ³²Àº ½Ã°£: " + attackCooldownTimer);
-    //}
-
-    
-
-    
 }
