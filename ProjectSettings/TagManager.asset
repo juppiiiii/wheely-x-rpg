@@ -9,6 +9,7 @@ TagManager:
   - Ground
   - PlayerTile
   - MonsterTile
+  - Audio
   layers:
   - Default
   - TransparentFX

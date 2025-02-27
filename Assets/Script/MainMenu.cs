@@ -1,17 +1,25 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class MainMenu : MonoBehaviour
 {
+    public GameObject OptionObj; //옵션오브젝트 생성접근
+    
+
     public Button[] menuButtons; // 메뉴 버튼 배열
     private int selectedIndex = 0; // 현재 선택된 인덱스
     private int keyPressCount = 0; // 키 누른 횟수 카운터
+
+    
    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        OptionObj.SetActive(false);
         Debug.Log("Menu Buttons Count: " + menuButtons.Length);
         selectedIndex = 1; // 이어하기 버튼의 인덱스에 맞게 수정
         UpdateMenuSelection();
@@ -49,6 +57,7 @@ public class MainMenu : MonoBehaviour
             }
             
         }
+        
     }
 
     void UpdateMenuSelection()
@@ -59,15 +68,13 @@ public class MainMenu : MonoBehaviour
             ColorBlock colors = button.colors;
             colors.normalColor = Color.white; // 기본 색상
             colors.highlightedColor = Color.cyan; // 마우스 오버 시 색상
-            colors.pressedColor = Color.green; // 클릭 시 색상
+            //colors.pressedColor = Color.green; // 클릭 시 색상
             button.colors = colors;
         }
 
         // 선택된 버튼 하이라이트
         ColorBlock selectedColors = menuButtons[selectedIndex].colors;
         selectedColors.normalColor = Color.yellow; // 하이라이트 색상
-        selectedColors.highlightedColor = Color.red; // 선택된 버튼 마우스 오버 시 색상
-        selectedColors.pressedColor = Color.magenta; // 선택된 버튼 클릭 시 색상
         menuButtons[selectedIndex].colors = selectedColors;
     }
 
@@ -84,7 +91,14 @@ public class MainMenu : MonoBehaviour
 
     public void OnClickOption()
     {
+        OptionObj.SetActive(true);
         Debug.Log("옵션");
+    }
+
+    public void OffClickOption()
+    {
+        OptionObj.SetActive(false);
+        Debug.Log("옵션이 꺼졌습니다");
     }
 
     public void OnClickQuit()
@@ -95,4 +109,5 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
 #endif
     }
+    
 }
